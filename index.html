@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#fbf6ec">
+<title>Libri di Natale · Antonio Catalano</title>
+<meta name="description" content="I libri di Natale di Antonio Catalano: Il Vangelo raccontato da un Asino Patentato, Artabàn e altri. Acquista online e vieni a trovarci a Bergamo.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Nunito+Sans:wght@400;600;700;800&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<style>
+/* VOICE  occasion: a little Christmas bookshop, poetic and warm, Catalano's "meraviglia"
+   IDEA   a shelf of books under a starry night of line drawings; each book opens like a page
+   PICTURE the covers, large, with reflection and parallax over a hand-drawn sky of stars, comets and huts
+   COLOUR warm paper ground, deep fir-green ink, Christmas red action, gold star accent
+   TYPE   Young Serif (naive, book-like) + Nunito Sans + Caveat for the handwritten line
+   LAYOUT full-screen horizontal shelf; detail: book left / sheet right on wide screens, book top / sheet below on phones */
+:root{
+  color-scheme:light;
+  --bg:#fbf6ec; --ink:#1e3329; --ink-dim:rgba(30,51,41,.68); --ink-faint:rgba(30,51,41,.3);
+  --red:#b3261e; --gold:#d4a23a; --green:#2f5d47; --paper:#f3eadb; --line:#e6d9c3;
+  --display:"Young Serif",Georgia,serif; --text:"Nunito Sans",system-ui,sans-serif; --script:"Caveat","Segoe Script",cursive;
+  --H:min(46dvh,62vw); --safe-t:env(safe-area-inset-top,0px); --safe-b:env(safe-area-inset-bottom,0px);
+  --ease:cubic-bezier(.2,.8,.2,1);
+}
+*{box-sizing:border-box;margin:0;padding:0;min-width:0}
+html,body{height:100%;background:var(--bg);color:var(--ink);overflow:clip;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;overscroll-behavior:none}
+body{font:400 16px/1.55 var(--text)}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--red);outline-offset:3px}
+#app{position:fixed;inset:0;overflow:clip;background:var(--bg)}
+
+/* cielo lontano */
+.far{position:absolute;top:-6%;bottom:-6%;left:-6%;width:260vw;will-change:transform;transition:filter .9s var(--ease)}
+.far svg.room{position:absolute;inset:0;width:100%;height:100%}
+.far .tint{position:absolute;inset:0;mix-blend-mode:multiply;opacity:.14;transition:background-color 1.2s var(--ease)}
+.vignette{position:absolute;inset:0;pointer-events:none;background:radial-gradient(120% 75% at 50% 46%,rgba(251,246,236,0) 30%,rgba(251,246,236,.7) 78%,#fbf6ec 100%),linear-gradient(180deg,rgba(251,246,236,.85) 0,rgba(251,246,236,0) 20%,rgba(251,246,236,0) 62%,#fbf6ec 92%)}
+#app.detail-open .far{filter:blur(5px) saturate(.8)}
+.snow{position:absolute;inset:0;pointer-events:none}
+.snow i{position:absolute;top:-4%;width:var(--s);height:var(--s);border-radius:50%;background:var(--c);opacity:.5;animation:fall var(--d) linear infinite;animation-delay:var(--dl)}
+@keyframes fall{to{transform:translate3d(var(--x),112dvh,0)}}
+
+/* scaffale */
+.scroller{position:absolute;inset:0;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none;scroll-snap-type:x proximity;touch-action:pan-x;overscroll-behavior-x:contain}
+.scroller.free{scroll-snap-type:none}
+.scroller::-webkit-scrollbar{display:none}
+.track{position:relative;height:100%;display:flex;align-items:center;padding-top:4dvh;width:max-content}
+.item{position:relative;flex:0 0 auto;width:calc(var(--H) * var(--ar) * var(--sc,1) + 16vw);min-width:170px;display:flex;flex-direction:column;align-items:center;scroll-snap-align:center;opacity:0;transform:translateY(28px);transition:opacity .9s var(--ease),transform .9s var(--ease);will-change:transform,opacity}
+.item.in{opacity:1;transform:none}
+#app.detail-open .item{opacity:0!important;transform:scale(.96);transition-duration:.45s}
+.dolce{position:relative;height:var(--H);width:calc(var(--H) * var(--ar) * var(--sc,1));display:flex;align-items:flex-end;justify-content:center}
+.dolce img{display:block;max-height:calc(var(--H) * var(--sc,1));max-width:100%;filter:drop-shadow(0 18px 18px rgba(30,51,41,.22));user-select:none;-webkit-user-drag:none;pointer-events:none;transition:transform .5s var(--ease)}
+.item:hover .dolce img{transform:translateY(-6px) rotate(-1.5deg)}
+.dolce .refl{display:none}
+.dolce.is-hidden img{visibility:hidden}
+.tag{position:absolute;z-index:2;top:calc(var(--H) * (1 - var(--sc,1)) - 12px);right:-10px;font:800 11px/1 var(--text);letter-spacing:.06em;background:var(--red);color:#fff;border-radius:99px;padding:7px 10px;transform:rotate(6deg)}
+.tag.soon{background:var(--ink-dim)}
+.label{position:relative;margin-top:22px;width:100%;max-width:240px;padding:0 4px;text-align:left}
+.label .name{display:block;font:400 22px/1.1 var(--display)}
+.label .coll{display:block;font:600 13px/1.4 var(--text);color:var(--ink-dim);margin-top:6px}
+.rule{display:block;height:1px;background:linear-gradient(90deg,rgba(30,51,41,.9),rgba(30,51,41,.4) 70%,rgba(30,51,41,0));transform-origin:0 50%;transform:rotate(var(--tilt,-.8deg)) scaleX(0);transition:transform 1.1s var(--ease) .25s;margin:9px 0 0}
+.item.in .rule{transform:rotate(var(--tilt,-.8deg)) scaleX(1)}
+
+/* cornice */
+.chrome{position:absolute;left:0;right:0;pointer-events:none;z-index:5;transition:opacity .5s var(--ease)}
+.chrome.top{top:0;padding:calc(var(--safe-t) + clamp(14px,2.4vw,28px)) clamp(18px,3vw,36px) 0;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.brand{pointer-events:auto;display:block;text-decoration:none}
+.brand b{display:block;font:400 clamp(22px,3vw,30px)/1 var(--display)}
+.brand span{display:block;font:500 20px/1 var(--script);color:var(--red);margin-top:4px}
+.right{display:flex;align-items:center;gap:14px}
+.counter{font:400 15px/1 var(--display);color:var(--ink-dim)}
+.counter b{font-weight:400;color:var(--ink);font-size:24px}
+.cart-chip{pointer-events:auto;display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;border-radius:99px;background:var(--ink);color:var(--bg);font:700 14px/1 var(--text)}
+.cart-chip svg{width:18px;height:18px}
+.cart-chip output{min-width:20px;height:20px;border-radius:99px;background:var(--gold);color:var(--ink);display:grid;place-items:center;font-size:12px;padding:0 5px}
+.chrome.bottom{bottom:0;padding:0 clamp(18px,3vw,36px) calc(var(--safe-b) + clamp(14px,2.4vw,26px))}
+.now{font:700 13px/1 var(--text);color:var(--ink-dim);display:flex;justify-content:space-between;align-items:center;gap:12px}
+.now>span:first-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.progress{height:1px;background:rgba(30,51,41,.14);margin-top:10px;position:relative;overflow:hidden}
+.progress i{position:absolute;inset:0;background:var(--ink);transform-origin:0 50%;transform:scaleX(0)}
+.hint{display:flex;align-items:center;gap:8px;transition:opacity .6s;white-space:nowrap}
+.hint svg{animation:nudge 1.8s var(--ease) infinite}
+@keyframes nudge{50%{transform:translateX(6px)}}
+.dots{pointer-events:auto;display:flex;gap:2px}
+.dots button{width:28px;height:28px;display:grid;place-items:center}
+.dots button i{width:6px;height:6px;border-radius:50%;background:var(--ink-faint);transition:all .4s var(--ease)}
+.dots button.on i{background:var(--ink);width:18px;border-radius:3px}
+#app.detail-open .chrome{opacity:0}
+#app.detail-open .chrome .cart-chip{pointer-events:none}
+
+/* dettaglio */
+.detail{position:absolute;inset:0;z-index:10;pointer-events:none;overflow:clip}
+.detail.open{pointer-events:auto}
+.d-slot{position:absolute;left:6vw;width:36vw;top:calc(var(--safe-t) + 90px);bottom:calc(var(--safe-b) + 8dvh)}
+.d-back{position:absolute;z-index:12;top:calc(var(--safe-t) + clamp(14px,2.4vw,26px));left:clamp(14px,2.4vw,26px);width:46px;height:46px;border-radius:50%;display:grid;place-items:center;border:1px solid rgba(30,51,41,.3);background:rgba(251,246,236,.75);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);opacity:0;transform:translateX(-10px) rotate(-20deg);transition:opacity .5s var(--ease),transform .6s var(--ease)}
+.detail.open .d-back{opacity:1;transform:none;transition-delay:.3s}
+.d-info{overflow-x:hidden;position:absolute;top:0;bottom:0;right:0;width:52vw;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(var(--safe-t) + 84px) 6vw calc(var(--safe-b) + 110px) 8px;scrollbar-width:thin;-webkit-mask-image:linear-gradient(180deg,transparent 0,transparent calc(var(--safe-t) + 62px),#000 calc(var(--safe-t) + 96px),#000 calc(100% - 40px),transparent);mask-image:linear-gradient(180deg,transparent 0,transparent calc(var(--safe-t) + 62px),#000 calc(var(--safe-t) + 96px),#000 calc(100% - 40px),transparent)}
+.d-info>*{opacity:0;transform:translateX(24px);transition:opacity .6s var(--ease),transform .7s var(--ease)}
+.detail.open .d-info>*{opacity:1;transform:none}
+.detail.closing .d-info>*{opacity:0;transition-duration:.25s;transition-delay:0s!important}
+.d-coll{font:700 14px/1.4 var(--text);color:var(--red)}
+.d-name{font:400 clamp(34px,5vw,52px)/1.05 var(--display);margin-top:8px;text-wrap:balance}
+.d-info .rule{width:82%;margin-top:16px;transform:rotate(var(--tilt,-.8deg)) scaleX(0)}
+.detail.open .d-info .rule{transform:rotate(var(--tilt,-.8deg)) scaleX(1)}
+.d-sub{font:600 15px/1.5 var(--text);color:var(--ink-dim);margin-top:12px}
+.d-script{font:500 28px/1.15 var(--script);color:var(--red);margin-top:24px}
+.d-text{font-size:16.5px;line-height:1.7;margin-top:10px;max-width:62ch}
+.d-text+.d-text{margin-top:12px}
+.d-text strong{font-weight:800}.d-text em{font-style:italic;color:var(--green)}
+.d-h{font:400 22px/1.2 var(--display);margin-top:34px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:48px;padding:12px 22px;border-radius:99px;background:var(--ink);color:var(--bg);font:800 15px/1 var(--text);text-decoration:none;transition:transform .3s var(--ease),background .3s}
+.btn:hover{transform:translateY(-2px)}
+.btn.red{background:var(--red);color:#fff}
+.btn.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--ink)}
+.btn.pp{background:#ffc439;color:#142c8e}
+.btn.off{opacity:.45;pointer-events:none}
+.btn svg{width:18px;height:18px}
+.ctas{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px;align-items:center}
+.sample{font-size:13px;color:var(--ink-dim);margin-top:12px}
+.buy{display:flex;flex-wrap:wrap;align-items:center;gap:14px 22px;margin-top:24px;padding:18px 20px;border-radius:20px;background:var(--paper)}
+.buy .pr{font:400 38px/1 var(--display);white-space:nowrap}
+.buy .pr small{display:block;font:600 12.5px/1.3 var(--text);color:var(--ink-dim);margin-top:4px}
+.buy .ctas{margin-top:0}
+.step{display:flex;align-items:center;border:1px solid var(--line);border-radius:99px;background:#fff}
+.step button{width:44px;height:44px;font-size:20px;line-height:1}
+.step output{min-width:24px;text-align:center;font-weight:800;font-variant-numeric:tabular-nums}
+.facts{list-style:none;margin-top:6px}
+.facts li{display:flex;justify-content:space-between;gap:16px;padding:12px 0;border-bottom:1px solid var(--line);font-size:15px}
+.facts li span:first-child{color:var(--ink-dim)}
+.facts li b,.facts li a{text-align:right;font-weight:700;text-decoration:none}
+
+/* carrello e cassa */
+.cart-sum{list-style:none;margin-top:6px}
+.cart-sum li{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);font-size:15px}
+.cart-sum li>span:last-child{white-space:nowrap;text-align:right;display:flex;align-items:center;gap:10px}
+.cart-sum li.t{font:400 26px/1.2 var(--display);border-bottom:0}
+.cart-sum .empty-c{color:var(--ink-dim);justify-content:flex-start}
+.cart-sum .step button{width:36px;height:36px;font-size:17px}
+.form{display:grid;gap:12px;margin-top:14px}
+.f{display:grid;gap:5px;font:700 13px/1.3 var(--text);color:var(--ink-dim)}
+.f input,.f textarea{font:400 16px/1.4 var(--text);color:var(--ink);padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:#fff;width:100%}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.opts{display:grid;gap:8px}
+.opt{display:flex;gap:12px;align-items:center;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:#fff;cursor:pointer;font-size:15px}
+.opt input{width:20px;height:20px;accent-color:var(--red);flex:none}
+.opt b{display:block}.opt small{color:var(--ink-dim);font-size:13px}
+.opt span:last-child{margin-left:auto;font-weight:800;white-space:nowrap}
+.notice{margin-top:12px;padding:14px 16px;border-radius:14px;background:color-mix(in srgb,var(--gold) 22%,#fff);font-size:14.5px;display:none}
+.notice.on{display:block}
+.cart-bar{position:absolute;z-index:12;left:max(14px,calc(76% - 260px));right:max(14px,calc(24% - 260px));bottom:calc(var(--safe-b) + 14px);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 10px 10px 18px;border-radius:99px;background:rgba(251,246,236,.94);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 10px 30px -10px rgba(30,51,41,.35),0 0 0 1px var(--line);transform:translateY(16px);opacity:0;pointer-events:none;transition:all .4s var(--ease)}
+.cart-bar.on{transform:none;opacity:1;pointer-events:auto}
+.cart-bar.on.hide{transform:translateY(16px);opacity:0;pointer-events:none}
+.cart-bar span{font-size:14.5px;white-space:nowrap;flex:1;line-height:1.3}
+
+/* appuntamenti */
+.events{display:grid;gap:10px;margin-top:12px}
+.ev{display:grid;grid-template-columns:auto minmax(0,1fr);gap:18px;align-items:start;padding:18px 20px;border:1px solid var(--line);border-radius:18px;background:#fff;text-decoration:none;transition:transform .3s var(--ease),border-color .3s}
+.ev:hover{transform:translateX(4px);border-color:var(--ink)}
+.ev .when{width:62px;height:66px;border-radius:14px;background:var(--red);color:#fff;display:grid;place-content:center;text-align:center}
+.ev .when b{font:400 28px/1 var(--display)}
+.ev .when small{font:800 12px/1.2 var(--text);text-transform:uppercase;margin-top:3px}
+.ev .what{display:block}
+.ev .what i{display:block;font:italic 600 14px/1.3 var(--text);color:var(--red)}
+.ev .what>b{display:block;font:400 22px/1.2 var(--display);color:var(--ink);margin:4px 0 10px}
+.ev dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 14px;font-size:14.5px;line-height:1.45}
+.ev dt{font:800 12px/1.9 var(--text);color:var(--ink-dim);text-transform:uppercase;letter-spacing:.04em}
+.ev dd{color:var(--ink)}
+.ev dd strong{font-weight:800}
+.ev .more{display:inline-block;margin-top:12px;font:800 14px/1.2 var(--text);color:var(--red);text-decoration:underline;text-underline-offset:3px}
+@media(max-width:480px){.ev{grid-template-columns:minmax(0,1fr);padding:16px}.ev .when{width:auto;height:auto;display:inline-flex;gap:6px;align-items:baseline;justify-self:start;padding:6px 12px;border-radius:99px}.ev .when b{font-size:20px}.ev dl{grid-template-columns:minmax(0,1fr);gap:0}.ev dt{margin-top:6px}}
+.shops{display:grid;gap:10px;margin-top:12px}
+.shop-ph{padding:16px;border:1.5px dashed var(--line);border-radius:16px;color:var(--ink-dim);font-size:15px}
+
+.item.photo .dolce img{border-radius:2px 6px 6px 2px;box-shadow:0 1px 0 1px rgba(30,51,41,.08),0 24px 34px -14px rgba(30,51,41,.45);filter:none}
+.hero.photo img{object-fit:contain;filter:drop-shadow(0 1px 1px rgba(30,51,41,.25)) drop-shadow(0 26px 26px rgba(30,51,41,.28))}
+/* conferma */
+.cart-chip.ghosty{background:rgba(251,246,236,.85);color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--ink)}
+.confirm{position:fixed;inset:0;z-index:30;display:grid;place-items:center;padding:16px;background:rgba(30,51,41,.45);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);opacity:0;transition:opacity .3s}
+.confirm.on{opacity:1}
+[hidden]{display:none!important}
+.cf-card{width:min(440px,100%);max-height:calc(100dvh - 32px);overflow:auto;background:var(--bg);border-radius:24px;padding:26px 24px 22px;text-align:center;box-shadow:0 30px 60px -20px rgba(0,0,0,.4)}
+.cf-card .cart-sum{text-align:left}.cf-card .ctas{justify-content:center}
+.cf-code{font:400 clamp(40px,11vw,54px)/1 var(--display);letter-spacing:.06em;margin:10px 0 14px;font-variant-numeric:tabular-nums}
+.cf-qr{width:180px;margin:0 auto;padding:8px;background:#fff;border-radius:14px;box-shadow:0 0 0 1px var(--line)}
+.cf-qr svg{display:block;width:100%;height:auto}
+.cf-how{font-size:15px;line-height:1.55;margin:16px 0 4px;text-align:left}
+.cf-demo{font:800 12.5px/1.3 var(--text);background:var(--gold);color:var(--ink);border-radius:10px;padding:8px 10px;margin-bottom:12px}
+/* oggetto che vola */
+.hero{position:fixed;z-index:11;pointer-events:none;will-change:transform;transform-origin:0 0}
+.hero img{display:block;width:100%;height:100%;object-fit:contain;object-position:50% 100%;filter:drop-shadow(0 26px 26px rgba(30,51,41,.25))}
+.hero.float img{animation:float 6s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-7px) rotate(.5deg)}}
+
+@media (max-aspect-ratio:1/1){
+  :root{--H:min(42dvh,64vw)}
+  .cart-bar{left:14px;right:14px}
+  .d-slot{left:0;right:0;width:auto;top:calc(var(--safe-t) + 66px);bottom:auto;height:24dvh}
+  .d-info{left:0;width:auto;top:calc(var(--safe-t) + 66px + 24dvh);padding:14px 20px calc(var(--safe-b) + 110px);-webkit-mask-image:linear-gradient(180deg,transparent 0,#000 18px,#000 calc(100% - 40px),transparent);mask-image:linear-gradient(180deg,transparent 0,#000 18px,#000 calc(100% - 40px),transparent)}
+  .two{grid-template-columns:minmax(0,1fr)}
+  .counter{display:none}
+}
+@media (max-width:420px){.cart-chip span{display:none}.dots{display:none}}
+@media (prefers-reduced-motion:reduce){
+  .hint svg,.hero.float img,.snow i{animation:none}
+  .item,.rule,.d-info>*{transition-duration:.01s!important}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="far" id="far" aria-hidden="true">
+    <svg class="room" id="room" preserveAspectRatio="xMidYMid slice"></svg>
+    <div class="snow" id="snow"></div>
+    <div class="tint" id="tint"></div>
+  </div>
+  <div class="vignette" aria-hidden="true"></div>
+
+  <div class="scroller" id="scroller" aria-label="I libri di Natale">
+    <div class="track" id="track"></div>
+  </div>
+
+  <div class="chrome top">
+    <a class="brand" href="#" id="home" aria-label="Torna all'inizio"><b>Antonio Catalano</b><span>i libri di Natale</span></a>
+    <div class="right">
+      <button class="cart-chip ghosty" id="lastOrder" type="button" hidden>Il mio ordine</button>
+      <div class="counter"><b id="cur">01</b> / <span id="tot">05</span></div>
+      <button class="cart-chip" id="cartChip" type="button" aria-label="Apri il carrello"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 8h14l-1.5 12h-11zM9 8V6a3 3 0 0 1 6 0v2"/></svg><span>Carrello</span><output id="chipN">0</output></button>
+    </div>
+  </div>
+  <div class="chrome bottom">
+    <div class="now"><span id="nowName"></span><span class="dots" id="dots"></span>
+      <span class="hint" id="hint">Scorri <svg width="22" height="10" viewBox="0 0 22 10" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M1 5h20M17 1l4 4-4 4"/></svg></span>
+    </div>
+    <div class="progress"><i id="bar"></i></div>
+  </div>
+
+  <div class="detail" id="detail" aria-hidden="true">
+    <div class="d-slot" id="slot"></div>
+    <button class="d-back" id="back" type="button" aria-label="Torna allo scaffale"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M11 3L5 9l6 6"/></svg></button>
+    <article class="d-info" id="info"></article>
+    <div class="cart-bar" id="cartBar"><span></span><button class="btn" type="button" data-goto="checkout">Vai alla cassa</button></div>
+  </div>
+</div>
+<div class="confirm" id="confirm" hidden role="dialog" aria-modal="true" aria-label="Conferma d'ordine"><div class="cf-card"></div></div>
+
+<script src="qr.js"></script>
+<script>
+{
+/* ======================================================================
+   DATI — tutto quello che si aggiorna sta qui.
+   ====================================================================== */
+const NEGOZIO={
+  // PAGAMENTI — si attivano quando il sito è sul dominio.
+  // Client-id del conto PayPal Business: abilita sia il pulsante PayPal sia "Paga con carta" (carta senza conto PayPal).
+  paypalClientId:"",
+  // ORDINI — indirizzo dell'app web del foglio Google "Ordini libri di Natale" (vedi ordini-google-sheet.gs).
+  ordiniURL:"",
+  ordiniChiave:"",   // la stessa CHIAVE scritta nello script del foglio
+  spedizione:5,      // costo spedizione Italia, DI ESEMPIO
+  ritiro:"Biglietteria del Monastero del Carmine · Via Bartolomeo Colleoni 21, Bergamo Alta",
+};
+// LIBRI. Dati e copertine dei primi due dalle schede IBS / Macrolibrarsi (novembre 2026). img: file in img/. Senza img la copertina è disegnata.
+const LIBRI=[
+ {id:"vangelo",stato:"ok",img:"img/vangelo.jpg",titolo:"Il Vangelo raccontato da un Asino Patentato",breve:"Il Vangelo dell'Asino",editore:"Kellermann Editore",anno:2021,pagine:111,formato:"14 × 21 cm, brossura",isbn:"978-88-6767-029-1",prezzo:14,
+  cover:{bg:"#b3261e",ink:"#fbf6ec",acc:"#f2c14e",motif:"stable",l1:"Il Vangelo",l2:"raccontato da un",l3:"Asino Patentato"},
+  frase:"Il Vangelo visto con gli occhi del meravigliato.",
+  testo:["Dall'**Annunciazione** — con Maria che a casa *gira la polenta* — fino al **risveglio di Gesù dopo la croce**, **Antonio Catalano** rilegge il racconto evangelico con la voce di **un asino**: *ingenua, sgrammaticata, piena di stupore*.",
+         "Giuseppe padre, la nascita, l'infanzia, il battesimo, le parabole e i miracoli, il discorso della montagna, l'ultima cena: *scene di vita semplice e quotidiana* che parlano di **speranza, pazienza, fragilità e tenerezza**, e del legame tra le persone e la terra."]},
+ {id:"artaban",stato:"ok",img:"img/artaban.jpg",tag:"In scena 8–9 gen",titolo:"Artabàn. La leggenda del quarto Re Mago",breve:"Artabàn",sotto:"Quattro erano i tre Re Magi",editore:"Team Service Editore",anno:2022,pagine:52,formato:"Brossura, illustrato",isbn:"979-12-81247-05-5",prezzo:10,
+  cover:{bg:"#1f4a5a",ink:"#fbf6ec",acc:"#e8b54a",motif:"comet",l1:"Artabàn",l2:"la leggenda del",l3:"quarto Re Mago"},
+  frase:"Quattro erano i tre Re Magi.",
+  testo:["Un **poema contadino**, *comico e poetico*, sul **Re Mago che avrebbe voluto unirsi agli altri tre per rendere omaggio al bambino Gesù**, ma *perde la stella, sbaglia strada e arriva in ritardo*.",
+         "Quel ritardo diventa **un viaggio fatto di incontri sorprendenti**: Artabàn consuma i sandali, si impolvera, ricuce il mondo pezzo per pezzo e, strada facendo, scopre *il senso della propria vita*."]},
+ {id:"storie",stato:"ok",img:"img/storie.jpg",tag:"Novità",titolo:"Venti storie piccolissime",breve:"Storie piccolissime",autori:"Antonio Catalano e Irene Lorenzini",editore:"Edizioni Artebambini",anno:2025,pagine:48,formato:"Cartonato, illustrato · dai 4 anni",isbn:"979-12-80792-23-5",prezzo:17.5,
+  cover:{bg:"#3f8f99"},
+  frase:"Una parola, un segno, un disegno.",
+  testo:["**Venti storie brevissime** fatte di immagini e poesia: a volte bastano *una parola o due, un segno, un disegno*. Sono storie da sentire, ascoltare e immaginare.",
+         "Raccontano i **piccoli momenti della vita di tutti i giorni**, quelli che di solito non vediamo, e propongono un modo nuovo di narrare, in cui *l'invisibile e l'immaginazione* diventano protagonisti. Un albo illustrato per bambini dai 4 anni, e per i grandi che li accompagnano."]},
+ {id:"anima",stato:"ok",img:"img/anima.jpg",tag:"In scena 27–28 dic",titolo:"L'anima e il gelato",breve:"L'anima e il gelato",sotto:"Racconti dell'uomo dal cappello di paglia",editore:"Kellermann Editore",anno:2025,pagine:192,formato:"Brossura, illustrato · prefazione di Vito Mancuso",isbn:"978-88-6767-159-5",prezzo:18,
+  cover:{bg:"#b3261e"},
+  frase:"Racconti da leggere uno alla volta, magari prima di dormire.",
+  testo:["Un tuffo in un mondo di **colori, sorrisi e ricordi**, con un filo di malinconia. È una *Spoon River* di persone e personaggi incontrati da Antonio Catalano in tanti anni di **teatro in giro per paesi e città**: tornano dalle nebbie del passato, cambiati, ma con intatta la meraviglia di quegli incontri.",
+         "Forse sono sogni, scritti in fretta di notte *perché non svanissero al mattino*. Vanno letti **uno alla volta**: nei mondi strani dell'autore si entra piano, tra ironia, qualche lacrima, sorrisi e un velo di tristezza.",
+         "Dal libro nasce lo spettacolo **«Arrivederci amore ciao. L'anima e il gelato»**, il *27 e 28 dicembre* al Teatro Renzo Vescovi di Bergamo."]}
+];
+// APPUNTAMENTI. Dalla pagina del Teatro tascabile di Bergamo (letta il 24/11/2026). Ogni scheda apre il link.
+const LUNAPARK="https://teatrotascabile.org/lunaparkdellemeraviglie/";
+const APPUNTAMENTI=[
+ {titolo:"Luna Park delle Meraviglie",tipo:"Installazione · III edizione",dal:"2026-12-05",al:"2027-01-10",luogo:"Monastero del Carmine · Via Bartolomeo Colleoni 21, Bergamo Alta",
+  orari:"5–20 dic: sabato e domenica · dal 21 dic al 10 gen: tutti i giorni · 10:00–20:00 · chiuso il 25 dicembre",prezzo:"Intero € 7 · ridotto € 5 · gratis under 4",link:LUNAPARK},
+ {titolo:"Arrivederci amore ciao. L'anima e il gelato",tipo:"Spettacolo con Antonio Catalano",dal:"2026-12-27",al:"2026-12-28",ora:"20:30",luogo:"Teatro Renzo Vescovi · Bergamo Alta",prezzo:"Intero € 10 · ridotto € 7",link:LUNAPARK},
+ {titolo:"Artabàn. La leggenda del quarto Re Mago",tipo:"Lettura spettacolo itinerante · regia di Antonio Catalano",dal:"2027-01-08",al:"2027-01-09",ora:"20:30",luogo:"Monastero del Carmine · Bergamo Alta",prezzo:"Intero € 10 · ridotto € 7",link:LUNAPARK}
+];
+// LIBRERIE dove trovare i libri: si aggiungono qui {nome, citta, indirizzo, link}.
+const LIBRERIE=[];
+
+/* ---------- copertine disegnate (provvisorie, da sostituire con le foto) ---------- */
+function coverSVG(c){
+  const W=300,H=440,M={
+   stable:`<path d="M80 330 150 270 220 330" fill="none" stroke="${c.ink}" stroke-width="5" stroke-linejoin="round"/><path d="M95 318v62h110v-62" fill="none" stroke="${c.ink}" stroke-width="5"/><path d="M135 380v-34h30v34" fill="none" stroke="${c.ink}" stroke-width="4"/><path d="M150 205l9 22 24 2-18 15 6 23-21-13-21 13 6-23-18-15 24-2z" fill="${c.acc}"/><path d="M150 268v-14" stroke="${c.acc}" stroke-width="3" stroke-dasharray="3 5"/>`,
+   comet:`<path d="M60 330c50-40 110-70 170-110" fill="none" stroke="${c.acc}" stroke-width="4" stroke-linecap="round" stroke-dasharray="2 10"/><path d="M228 222l8 19 21 2-16 13 5 20-18-11-18 11 5-20-16-13 21-2z" fill="${c.acc}"/><path d="M40 392c40-30 80-34 120-20s80 10 100-6" fill="none" stroke="${c.ink}" stroke-width="4" stroke-linecap="round"/><path d="M92 360c0-14 10-24 22-24s22 10 22 24" fill="none" stroke="${c.ink}" stroke-width="4"/><path d="M114 336v-12M106 326h16" stroke="${c.ink}" stroke-width="3"/>`,
+   tree:`<path d="M150 210l50 80h-26l40 60H86l40-60h-26z" fill="none" stroke="${c.ink}" stroke-width="5" stroke-linejoin="round"/><path d="M150 350v30" stroke="${c.ink}" stroke-width="6"/><circle cx="150" cy="200" r="9" fill="${c.acc}"/>`,
+   moon:`<path d="M175 215a60 60 0 1 0 0 110 48 48 0 1 1 0-110z" fill="none" stroke="${c.ink}" stroke-width="5"/><circle cx="210" cy="240" r="4" fill="${c.acc}"/><circle cx="95" cy="230" r="3" fill="${c.acc}"/><circle cx="220" cy="350" r="3" fill="${c.acc}"/>`
+  }[c.motif]||"";
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W+18} ${H+10}">
+   <defs><linearGradient id="sp" x1="0" x2="1"><stop offset="0" stop-color="#000" stop-opacity=".28"/><stop offset=".08" stop-color="#fff" stop-opacity=".18"/><stop offset=".14" stop-color="#000" stop-opacity=".06"/><stop offset="1" stop-color="#000" stop-opacity="0"/></linearGradient>
+   <linearGradient id="lt" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".16"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/></linearGradient></defs>
+   <path d="M14 8h${W}v${H}H14z" fill="#f4eee2"/><path d="M${W+6} 10h6v${H-4}h-6z" fill="#e4dccb"/>
+   <rect x="0" y="0" width="${W}" height="${H}" rx="6" fill="${c.bg}"/>
+   <rect x="0" y="0" width="${W}" height="${H}" rx="6" fill="url(#lt)"/>
+   <rect x="0" y="0" width="${W}" height="${H}" rx="6" fill="url(#sp)"/>
+   <text x="150" y="86" text-anchor="middle" font-family="Georgia,serif" font-size="40" fill="${c.ink}">${c.l1}</text>
+   <text x="150" y="122" text-anchor="middle" font-family="Georgia,serif" font-style="italic" font-size="20" fill="${c.ink}" opacity=".85">${c.l2}</text>
+   <text x="150" y="156" text-anchor="middle" font-family="Georgia,serif" font-size="27" fill="${c.ink}">${c.l3}</text>
+   ${M}
+   <text x="150" y="418" text-anchor="middle" font-family="Georgia,serif" font-size="15" letter-spacing="2" fill="${c.ink}" opacity=".8">ANTONIO CATALANO</text>
+  </svg>`;
+  return "data:image/svg+xml,"+encodeURIComponent(svg);
+}
+const calSVG=()=>"data:image/svg+xml,"+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 380">
+ <rect x="20" y="40" width="280" height="320" rx="22" fill="#fbf6ec" stroke="#1e3329" stroke-width="5"/>
+ <path d="M20 62a22 22 0 0 1 22-22h236a22 22 0 0 1 22 22v48H20z" fill="#b3261e"/>
+ <path d="M90 20v44M230 20v44" stroke="#1e3329" stroke-width="8" stroke-linecap="round"/>
+ <text x="160" y="96" text-anchor="middle" font-family="Georgia,serif" font-size="30" fill="#fbf6ec">Dicembre</text>
+ <g font-family="Georgia,serif" font-size="22" fill="#1e3329" text-anchor="middle">${Array.from({length:20},(_,i)=>{const x=60+(i%5)*50,y=160+Math.floor(i/5)*48,on=i>=2;return (on?`<rect x="${x-20}" y="${y-28}" width="40" height="38" rx="10" fill="#b3261e" opacity=".16"/>`:"")+`<text x="${x}" y="${y}">${i+3}</text>`}).join("")}</g>
+ <path d="M160 300l7 16 18 2-13 11 4 17-16-9-16 9 4-17-13-11 18-2z" fill="#d4a23a" transform="translate(110 -10)"/>
+</svg>`);
+
+const SEZIONI=[...LIBRI.map((b,i)=>({id:b.id,name:b.breve,coll:b.stato==="ok"?`${b.editore} · ${eur(b.prezzo)}`:"In arrivo",src:b.img||coverSVG(b.cover),photo:!!b.img,tint:b.cover.bg,tag:b.stato==="soon"?"Presto":b.tag||null,book:b})),
+  {id:"appuntamenti",name:"Dove trovarci",coll:"Bergamo Alta · 5 dic – 10 gen",src:calSVG(),tint:"#d4a23a"}];
+
+/* ---------- utilità ---------- */
+function eur(n){return n==null?"—":"€ "+(+n).toFixed(n%1?2:0).replace(".",",")}
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const pad=n=>String(n).padStart(2,"0");
+const md=s=>esc(s).replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>").replace(/\*(.+?)\*/g,"<em>$1</em>");
+
+/* ---------- elementi ---------- */
+const app=$("#app"),scroller=$("#scroller"),track=$("#track"),far=$("#far"),tint=$("#tint"),detail=$("#detail"),info=$("#info"),slot=$("#slot");
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+$("#tot").textContent=pad(SEZIONI.length);
+
+/* ---------- cielo disegnato a linee ---------- */
+(function room(){
+  const W=2600,H=1000,sv=$("#room");sv.setAttribute("viewBox",`0 0 ${W} ${H}`);
+  let s=11;const rnd=()=>(s=s*16807%2147483647)/2147483647;
+  const icons={
+    star:'<path d="M0-30l8 20 22 2-17 14 6 21L0 15l-19 12 6-21-17-14 22-2z"/>',
+    moon:'<path d="M14-36a38 38 0 1 0 0 72 30 30 0 1 1 0-72z"/>',
+    tree:'<path d="M0-50l30 44H14l26 40h-80l26-40h-16z"/><path d="M0 34v18"/>',
+    comet:'<path d="M-50 30C-20 6 10-12 34-24"/><path d="M34-24l6 14 15 1-11 9 4 14-14-8-13 8 4-14-11-9 15-1z"/>',
+    hut:'<path d="M-44 10 0-30 44 10"/><path d="M-34 2v38h68V2"/><path d="M-8 40V18h16v22"/>',
+    bell:'<path d="M-24 22c0-34 8-46 24-46s24 12 24 46z"/><path d="M-30 22h60"/><circle cx="0" cy="30" r="5"/>'
+  };
+  const keys=Object.keys(icons);let g="";
+  const CW=250,CH=240,nc=Math.floor(W/CW),rows=Math.floor((H-120)/CH);let n=0;
+  for(let r=0;r<rows;r++)for(let c=0;c<nc;c++){if(rnd()<.36)continue;
+    const k=keys[(n++)%keys.length],sc=.6+rnd()*.34,x=c*CW+CW/2+(rnd()-.5)*(CW-180*sc),y=90+r*CH+CH/2+(rnd()-.5)*(CH-170*sc),rot=(rnd()-.5)*28;
+    g+=`<g transform="translate(${x.toFixed(0)} ${y.toFixed(0)}) rotate(${rot.toFixed(0)}) scale(${sc.toFixed(2)})" fill="none" stroke="#1e3329" stroke-opacity=".12" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${icons[k]}</g>`}
+  const blobs=[["#b3261e",380,420,400],["#d4a23a",1100,300,360],["#2f5d47",1800,520,320],["#b3261e",2300,360,380]].map(([c,x,y,r])=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${c}" opacity=".13"/>`).join("");
+  sv.innerHTML=`<defs><filter id="bl"><feGaussianBlur stdDeviation="60"/></filter></defs><g filter="url(#bl)">${blobs}</g>${g}`;
+  if(reduce)return;
+  const sn=$("#snow");let h="";const cols=["#b3261e","#d4a23a","#2f5d47","#c9bfae"];
+  for(let i=0;i<46;i++)h+=`<i style="left:${(rnd()*100).toFixed(1)}%;--s:${(3+rnd()*6).toFixed(1)}px;--c:${cols[i%4]};--d:${(9+rnd()*10).toFixed(1)}s;--dl:-${(rnd()*18).toFixed(1)}s;--x:${((rnd()-.5)*80).toFixed(0)}px"></i>`;
+  sn.innerHTML=h;
+})();
+
+/* ---------- scaffale ---------- */
+const ratios={};
+const items=SEZIONI.map((p,i)=>{
+  const el=document.createElement("button");el.type="button";el.className="item";el.dataset.i=i;el.setAttribute("aria-label",`${p.name}: ${p.coll}`);
+  el.style.setProperty("--ar",.7);if(i>0)el.style.setProperty("--sc",.86);if(p.photo)el.classList.add("photo");
+  const tilt=[-.8,.5,-.4,.9,-.6][i%5];
+  el.innerHTML=`<div class="dolce">${p.tag?`<span class="tag ${p.book&&p.book.stato==="soon"?"soon":""}">${esc(p.tag)}</span>`:""}<img alt="" src="${p.src}"></div>
+   <div class="label" style="--tilt:${tilt}deg"><span class="name">${esc(p.name)}</span><span class="rule"></span><span class="coll">${esc(p.coll)}</span></div>`;
+  const im=el.querySelector(".dolce img");
+  const setAr=()=>{if(im.naturalWidth){const ar=Math.min(Math.max(im.naturalWidth/im.naturalHeight,.6),1.9);ratios[i]=ar;el.style.setProperty("--ar",ar);layout()}};
+  im.complete?setAr():im.addEventListener("load",setAr);
+  el.addEventListener("click",()=>open(i));
+  track.appendChild(el);return el;
+});
+$("#dots").innerHTML=SEZIONI.map((p,i)=>`<button type="button" data-go="${i}" aria-label="${esc(p.name)}"><i></i></button>`).join("");
+
+/* ---------- parallasse e scorrimento ---------- */
+let farK=.06,maxScroll=1,centers=[];
+function layout(){
+  track.style.paddingLeft=Math.max(16,innerWidth/2-items[0].offsetWidth/2)+"px";
+  track.style.paddingRight=Math.max(16,innerWidth/2-items[items.length-1].offsetWidth/2)+"px";
+  maxScroll=Math.max(1,scroller.scrollWidth-scroller.clientWidth);
+  const travel=Math.max(0,far.offsetWidth-innerWidth*1.12);farK=Math.min(.12,travel/maxScroll);
+  centers=items.map(el=>el.offsetLeft+el.offsetWidth/2);
+  render(true);
+}
+let tiltX=0,tiltY=0,tX=0,tY=0,cur=-1;const t0=performance.now();
+function render(force){
+  const sx=scroller.scrollLeft,drift=reduce?0:Math.sin((performance.now()-t0)/5200)*6;
+  tX+=(tiltX-tX)*.08;tY+=(tiltY-tY)*.08;
+  far.style.transform=`translate3d(${(-sx*farK+tX*16+drift).toFixed(2)}px,${(tY*10).toFixed(2)}px,0)`;
+  const c=sx+scroller.clientWidth/2;let k=0,best=1e9;centers.forEach((x,i)=>{const d=Math.abs(x-c);if(d<best){best=d;k=i}});
+  if(k!==cur||force===true){cur=k;const p=SEZIONI[k];
+    $("#cur").textContent=pad(k+1);$("#nowName").textContent=p.name;tint.style.backgroundColor=p.tint;
+    document.querySelectorAll("#dots button").forEach((b,i)=>b.classList.toggle("on",i===k));
+  }
+  $("#bar").style.transform=`scaleX(${(sx/maxScroll).toFixed(4)})`;
+}
+(function loop(){render();requestAnimationFrame(loop)})();
+scroller.addEventListener("scroll",()=>{if(scroller.scrollLeft>30)$("#hint").style.opacity=0},{passive:true});
+addEventListener("resize",()=>{layout();if(openIdx!=null&&hero&&!busy)placeHero()});
+let target=null,anim=0,snapT=0;
+const clampX=x=>Math.max(0,Math.min(maxScroll,x));
+function step(){const c=scroller.scrollLeft,n=c+(target-c)*(reduce?1:.11);
+  if(Math.abs(target-n)<.6){scroller.scrollLeft=target;target=null;anim=0;scroller.classList.remove("free");return}
+  scroller.scrollLeft=n;anim=requestAnimationFrame(step)}
+function glide(x){target=clampX(x);scroller.classList.add("free");if(!anim)anim=requestAnimationFrame(step)}
+function nearest(x){let k=0,b=1e9;centers.forEach((c,i)=>{const d=Math.abs(c-scroller.clientWidth/2-x);if(d<b){b=d;k=i}});return k}
+scroller.addEventListener("wheel",e=>{
+  const d=Math.abs(e.deltaY)>Math.abs(e.deltaX)?e.deltaY:e.deltaX;if(!d)return;e.preventDefault();
+  const unit=e.deltaMode===1?32:e.deltaMode===2?scroller.clientWidth:1;
+  glide((target??scroller.scrollLeft)+d*unit*1.1);
+  clearTimeout(snapT);snapT=setTimeout(()=>glide(centers[nearest(target??scroller.scrollLeft)]-scroller.clientWidth/2),160);
+},{passive:false});
+scroller.addEventListener("pointerdown",()=>{if(anim){cancelAnimationFrame(anim);anim=0;target=null;scroller.classList.remove("free")}});
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target)}}),{root:scroller,rootMargin:"0px 10% 0px 0px",threshold:.15});
+items.forEach((el,i)=>{el.style.transitionDelay=(i*90)+"ms";io.observe(el)});
+const goTo=i=>glide(centers[i]-scroller.clientWidth/2);
+addEventListener("keydown",e=>{
+  if(e.key==="Escape"){if(!$("#confirm").hidden){closeConfirm();return}if(openIdx!=null)close();return}
+  if(openIdx!=null)return;
+  if(e.key==="ArrowRight")goTo(Math.min(cur+1,items.length-1));
+  if(e.key==="ArrowLeft")goTo(Math.max(cur-1,0));
+});
+if(!reduce)addEventListener("pointermove",e=>{if(e.pointerType!=="mouse")return;tiltX=(e.clientX/innerWidth-.5)*-1.4;tiltY=(e.clientY/innerHeight-.5)*-1.2});
+
+/* ---------- carrello ---------- */
+let cart={},consegna="ritiro";
+try{cart=JSON.parse(localStorage.getItem("catalano-cart")||"{}")||{}}catch(e){cart={}}
+const save=()=>{try{localStorage.setItem("catalano-cart",JSON.stringify(cart))}catch(e){}};
+const inCart=()=>LIBRI.filter(b=>b.stato==="ok"&&cart[b.id]>0);
+const count=()=>inCart().reduce((a,b)=>a+cart[b.id],0);
+const subtotal=()=>inCart().reduce((a,b)=>a+b.prezzo*cart[b.id],0);
+const total=()=>subtotal()+(consegna==="spedizione"&&count()?NEGOZIO.spedizione:0);
+const stepper=id=>`<div class="step"><button type="button" data-minus="${id}" aria-label="Togli una copia">−</button><output data-q="${id}">${cart[id]||0}</output><button type="button" data-plus="${id}" aria-label="Aggiungi una copia">+</button></div>`;
+function upd(){
+  save();const n=count();
+  $("#chipN").textContent=n;
+  document.querySelectorAll("[data-q]").forEach(o=>o.textContent=cart[o.dataset.q]||0);
+  const bar=$("#cartBar");bar.classList.toggle("on",n>0&&openIdx!=null&&!!$("#checkout"));
+  bar.querySelector("span").innerHTML=`<b>${n} ${n===1?"libro":"libri"}</b> · ${eur(total())}`;
+  const s=$("#oSum");if(s)s.innerHTML=n?inCart().map(b=>`<li><span>${esc(b.breve)}</span><span>${stepper(b.id)}<b>${eur(b.prezzo*cart[b.id])}</b></span></li>`).join("")
+    +(consegna==="spedizione"?`<li><span>Spedizione in Italia</span><span>${eur(NEGOZIO.spedizione)}</span></li>`:`<li><span>Ritiro a Bergamo</span><span>gratis</span></li>`)
+    +`<li class="t"><span>Totale</span><span>${eur(total())}</span></li>`:'<li class="empty-c">Il carrello è vuoto: aggiungi un libro.</li>';
+  const ad=$("#oAddr");if(ad)ad.hidden=consegna!=="spedizione";
+  document.querySelectorAll("[data-pay]").forEach(b=>b.classList.toggle("off",!n));
+}
+const checkout=()=>`<h3 class="d-h" id="checkout">Il tuo carrello</h3>
+  <ul class="cart-sum" id="oSum"></ul>
+  <form class="form" id="oForm" novalidate>
+   <div class="opts" role="radiogroup" aria-label="Consegna">
+    <label class="opt"><input type="radio" name="consegna" value="ritiro" ${consegna==="ritiro"?"checked":""}><span><b>Ritiro a Bergamo</b><small>Durante le giornate di Natale</small></span><span>gratis</span></label>
+    <label class="opt"><input type="radio" name="consegna" value="spedizione" ${consegna==="spedizione"?"checked":""}><span><b>Spedizione in Italia</b><small>Corriere, 3–5 giorni lavorativi</small></span><span>${eur(NEGOZIO.spedizione)}</span></label>
+   </div>
+   <div class="two"><label class="f">Nome e cognome<input id="oNome" autocomplete="name" required></label><label class="f">Email<input id="oMail" type="email" autocomplete="email" required></label></div>
+   <div id="oAddr" hidden class="form" style="margin-top:0"><label class="f">Indirizzo<input id="oVia" autocomplete="street-address"></label>
+    <div class="two"><label class="f">CAP e città<input id="oCitta" autocomplete="address-level2"></label><label class="f">Telefono<input id="oTel" type="tel" autocomplete="tel"></label></div></div>
+   <label class="f">Dedica o note<textarea id="oNote" rows="2" placeholder="Una dedica dell'autore, un pacchetto regalo…"></textarea></label>
+   <div class="ctas" style="margin-top:4px">
+    <button class="btn pp" type="button" data-pay="paypal"><b>Pay</b>Pal</button>
+    <button class="btn" type="button" data-pay="carta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg>Paga con carta</button>
+   </div>
+   <div id="ppBox"></div>
+   <p class="notice" id="oMsg" role="status"></p>
+   <p class="sample">Costo di spedizione di esempio. Pagamento sicuro con PayPal o carta di credito/debito.</p>
+  </form>`;
+function formErr(){
+  const nome=$("#oNome").value.trim(),mail=$("#oMail").value.trim();
+  return !nome?"Scrivi nome e cognome.":!/^\S+@\S+\.\S+$/.test(mail)?"Serve un'email valida per la ricevuta.":consegna==="spedizione"&&(!$("#oVia").value.trim()||!$("#oCitta").value.trim())?"Completa l'indirizzo di spedizione.":"";
+}
+/* codice d'ordine: CAT- + 4 caratteri senza lettere ambigue (0/O, 1/I) */
+function newCode(){const A="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";let s="";const r=new Uint32Array(4);crypto.getRandomValues(r);r.forEach(x=>s+=A[x%A.length]);return "CAT-"+s}
+function buildOrder(pagamento){
+  return {codice:newCode(),data:new Date().toISOString(),nome:$("#oNome").value.trim(),email:$("#oMail").value.trim(),
+    telefono:($("#oTel")||{}).value||"",consegna:consegna==="ritiro"?"Ritiro a Bergamo":"Spedizione",
+    indirizzo:consegna==="spedizione"?`${$("#oVia").value.trim()}, ${$("#oCitta").value.trim()}`:"",
+    righe:inCart().map(b=>({titolo:b.breve,copie:cart[b.id],prezzo:b.prezzo})),copie:count(),totale:+total().toFixed(2),
+    pagamento,note:$("#oNote").value.trim(),chiave:NEGOZIO.ordiniChiave};
+}
+/* invio al foglio Google: text/plain + no-cors, così il browser non blocca la richiesta */
+function sendOrder(o){
+  if(!NEGOZIO.ordiniURL)return Promise.resolve(false);
+  return fetch(NEGOZIO.ordiniURL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(o)}).then(()=>true,()=>false);
+}
+function onPaid(pagamento){
+  const o=buildOrder(pagamento);
+  try{localStorage.setItem("catalano-ultimo-ordine",JSON.stringify({...o,chiave:undefined}))}catch(e){}
+  sendOrder(o).then(ok=>{if(!ok){try{const q=JSON.parse(localStorage.getItem("catalano-da-inviare")||"[]");q.push(o);localStorage.setItem("catalano-da-inviare",JSON.stringify(q))}catch(e){}}});
+  cart={};upd();showConfirm(o,false);
+}
+/* riprova a inviare ordini rimasti in sospeso (rete assente al momento del pagamento) */
+(function retry(){try{const q=JSON.parse(localStorage.getItem("catalano-da-inviare")||"[]");if(!q.length||!NEGOZIO.ordiniURL)return;
+  Promise.all(q.map(sendOrder)).then(r=>{const left=q.filter((_,i)=>!r[i]);localStorage.setItem("catalano-da-inviare",JSON.stringify(left))})}catch(e){}})();
+let ppLoading=null;
+function loadPayPal(){
+  if(window.paypal)return Promise.resolve();
+  if(!ppLoading)ppLoading=new Promise((ok,ko)=>{const s=document.createElement("script");s.src=`https://www.paypal.com/sdk/js?client-id=${encodeURIComponent(NEGOZIO.paypalClientId)}&currency=EUR&locale=it_IT&components=buttons,funding-eligibility`;s.onload=ok;s.onerror=ko;document.head.appendChild(s)});
+  return ppLoading;
+}
+function pay(kind){
+  const msg=$("#oMsg"),bad=formErr();msg.classList.add("on");
+  if(bad){msg.textContent=bad;return}
+  if(!NEGOZIO.paypalClientId){
+    msg.innerHTML=`Il pagamento online non è ancora attivo: si collega quando il sito va sul dominio. L'ordine di ${count()} ${count()===1?"libro":"libri"} (${eur(total())}) non è stato inviato né addebitato.<br><button class="btn ghost" type="button" data-preview="1" style="margin-top:10px;min-height:40px">Vedi l'anteprima della conferma</button>`;return}
+  msg.textContent="Apro il pagamento sicuro…";
+  loadPayPal().then(()=>{
+    const box=$("#ppBox");box.innerHTML="";
+    paypal.Buttons({fundingSource:kind==="carta"?paypal.FUNDING.CARD:paypal.FUNDING.PAYPAL,style:{shape:"pill",label:"pay"},
+      createOrder:(d,a)=>a.order.create({purchase_units:[{description:"Libri di Antonio Catalano",amount:{currency_code:"EUR",value:total().toFixed(2)}}]}),
+      onApprove:(d,a)=>a.order.capture().then(det=>{box.innerHTML="";msg.classList.remove("on");onPaid(`${kind==="carta"?"Carta":"PayPal"} ${det.id}`)}),
+      onCancel:()=>{msg.textContent="Pagamento annullato: il carrello è ancora qui."},
+      onError:()=>{msg.textContent="Il pagamento non è andato a buon fine. Riprova o scegli l'altro metodo."}
+    }).render(box);msg.textContent="Completa il pagamento qui sotto.";
+  },()=>{msg.textContent="Non riesco ad aprire il pagamento. Controlla la connessione e riprova."});
+}
+/* ---------- conferma con codice e QR ---------- */
+function qrSVG(text){
+  if(!window.QRGen)return "";
+  const q=new QRGen(-1,QRGen.L.M);q.addData(text);q.make();const n=q.getModuleCount(),m=2;let p="";
+  for(let r=0;r<n;r++)for(let c=0;c<n;c++)if(q.isDark(r,c))p+=`M${c+m} ${r+m}h1v1h-1z`;
+  return `<svg viewBox="0 0 ${n+2*m} ${n+2*m}" role="img" aria-label="QR del codice d'ordine" shape-rendering="crispEdges"><rect width="100%" height="100%" fill="#fff"/><path d="${p}" fill="#1e3329"/></svg>`;
+}
+function showConfirm(o,demo){
+  const rit=o.consegna==="Ritiro a Bergamo",box=$("#confirm");
+  box.querySelector(".cf-card").innerHTML=`${demo?'<p class="cf-demo">Anteprima: questo ordine non è valido e non è stato inviato</p>':""}
+   <p class="d-coll">Ordine confermato · grazie, ${esc(o.nome.split(" ")[0])}!</p>
+   <h2 class="cf-code">${esc(o.codice)}</h2>
+   <div class="cf-qr">${qrSVG(`${o.codice} · ${o.nome}`)}</div>
+   <p class="cf-how">${rit?`<strong>Ritiro a Bergamo.</strong> Mostra questo codice o il QR alla <strong>${esc(NEGOZIO.ritiro)}</strong>, negli orari del Luna Park delle Meraviglie (5 dicembre – 10 gennaio).`
+     :`<strong>Spedizione.</strong> Prepariamo il pacco per <em>${esc(o.indirizzo)}</em>: ti scriviamo a <em>${esc(o.email)}</em> quando parte.`}</p>
+   <ul class="cart-sum">${o.righe.map(r=>`<li><span>${r.copie} × ${esc(r.titolo)}</span><span>${eur(r.prezzo*r.copie)}</span></li>`).join("")}<li class="t"><span>Pagato</span><span>${eur(o.totale)}</span></li></ul>
+   <p class="sample">Fai uno screenshot di questa pagina: è la tua ricevuta di ritiro. La ritrovi anche da «Il mio ordine» in alto.</p>
+   <div class="ctas"><button class="btn" type="button" data-closeconf="1">Fatto</button></div>`;
+  box.hidden=false;requestAnimationFrame(()=>box.classList.add("on"));box.querySelector("[data-closeconf]").focus();
+  $("#lastOrder").hidden=demo;
+}
+function closeConfirm(){const b=$("#confirm");b.classList.remove("on");setTimeout(()=>b.hidden=true,300)}
+
+/* ---------- viste ---------- */
+function bookView(b,i){
+  const ok=b.stato==="ok";
+  return `<p class="d-coll">${ok?`${b.editore} · ${b.anno}`:"In arrivo"}</p><h2 class="d-name">${esc(b.titolo)}</h2><span class="rule"></span>
+  <p class="d-sub">${b.sotto?`<em>${esc(b.sotto)}</em> · `:""}di ${esc(b.autori||"Antonio Catalano")}</p>
+  <div class="buy">${ok?`<div class="pr">${eur(b.prezzo)}<small>prezzo di copertina</small></div>${stepper(b.id)}<div class="ctas"><button class="btn red" type="button" data-add="${b.id}">Aggiungi al carrello</button></div>`
+    :`<div class="pr" style="font-size:26px">Presto disponibile<small>Titolo, foto e prezzo in arrivo</small></div>`}</div>
+  <p class="d-script">${esc(b.frase)}</p>
+  ${b.testo.map(t=>`<p class="d-text">${md(t)}</p>`).join("")}
+  ${ok?`<h3 class="d-h">Scheda</h3><ul class="facts">
+   <li><span>${b.autori?"Autori":"Autore"}</span><b>${esc(b.autori||"Antonio Catalano")}</b></li><li><span>Editore</span><b>${esc(b.editore)}</b></li><li><span>Anno</span><b>${b.anno}</b></li>
+   ${b.pagine?`<li><span>Pagine</span><b>${b.pagine}</b></li>`:""}<li><span>Formato</span><b>${esc(b.formato)}</b></li><li><span>ISBN</span><b>${esc(b.isbn)}</b></li></ul>
+`:""}
+  ${checkout()}`;
+}
+const MESI=["gennaio","febbraio","marzo","aprile","maggio","giugno","luglio","agosto","settembre","ottobre","novembre","dicembre"];
+const day=s=>{const[a,b,c]=s.split("-").map(Number);return new Date(a,b-1,c)};
+const fmt=d=>`${d.getDate()} ${MESI[d.getMonth()].slice(0,3)}`;
+const VIEW_APP=()=>`<p class="d-coll">Natale 2026 · Bergamo Alta</p><h2 class="d-name">Dove trovarci</h2><span class="rule"></span>
+  <p class="d-sub">Dal 5 dicembre al 10 gennaio siamo al Monastero del Carmine, con il Teatro tascabile di Bergamo</p>
+  <h3 class="d-h">Prossimi appuntamenti</h3>
+  <div class="events">${APPUNTAMENTI.map(a=>{const s=day(a.dal),e=day(a.al),same=s.getMonth()===e.getMonth();
+   const quando=same?`${s.getDate()}–${e.getDate()} ${MESI[s.getMonth()]}`:`${fmt(s)} → ${fmt(e)}`;
+   const row=(k,v)=>v?`<dt>${k}</dt><dd>${v}</dd>`:"";
+   return `<a class="ev" href="${esc(a.link)}" target="_blank" rel="noopener">
+    <span class="when"><b>${s.getDate()}</b><small>${MESI[s.getMonth()].slice(0,3)}</small></span>
+    <span class="what"><i>${esc(a.tipo)}</i><b>${esc(a.titolo)}</b>
+     <dl>${row("Quando",`<strong>${esc(quando)}</strong>${a.ora?` · ore <strong>${esc(a.ora)}</strong>`:""}`)}${row("Dove",`<strong>${esc(a.luogo.split(" · ")[0])}</strong>${a.luogo.includes(" · ")?"<br>"+esc(a.luogo.split(" · ").slice(1).join(" · ")):""}`)}${row("Orari",a.orari?a.orari.split(" · ").map(esc).join("<br>"):"")}${row("Biglietti",esc(a.prezzo).replace(/€ (\d+)/g,"<strong>€ $1</strong>"))}</dl>
+     <span class="more">Info e biglietti sul sito del Tascabile →</span></span>
+    </a>`}).join("")}</div>
+  <p class="sample">Orari e biglietti dalla pagina del Teatro tascabile di Bergamo: tocca un appuntamento per aprirla.</p>
+  <h3 class="d-h">Dove comprare i nostri libri</h3>
+  <div class="shops">${LIBRERIE.length?LIBRERIE.map(l=>`<a class="opt" href="${esc(l.link||"#")}" target="_blank" rel="noopener"><span><b>${esc(l.nome)}</b><small>${esc(l.citta)} · ${esc(l.indirizzo)}</small></span></a>`).join("")
+    :'<div class="shop-ph">Stiamo raccogliendo le librerie che hanno i nostri libri: presto le trovi qui. Intanto puoi comprarli online da questo sito, o al Monastero del Carmine durante le giornate di Natale.</div>'}</div>
+  <div class="ctas"><button class="btn red" type="button" data-open="vangelo">Vai ai libri</button></div>`;
+
+document.addEventListener("click",e=>{
+  const go=e.target.closest("[data-go]");if(go){goTo(+go.dataset.go);return}
+  const t=e.target.closest("button");if(!t)return;const d=t.dataset;
+  if(d.plus){cart[d.plus]=(cart[d.plus]||0)+1;upd()}
+  else if(d.minus){cart[d.minus]=Math.max(0,(cart[d.minus]||0)-1);upd()}
+  else if(d.add){if(!cart[d.add])cart[d.add]=1;upd();t.textContent="Nel carrello ✓";setTimeout(()=>{t.textContent="Aggiungi al carrello"},1600)}
+  else if(d.pay)pay(d.pay);
+  else if(d.preview){if(!formErr())showConfirm(buildOrder("Anteprima"),true)}
+  else if(d.closeconf)closeConfirm();
+  else if(d.goto){const el=document.getElementById(d.goto);if(el)info.scrollTo({top:el.offsetTop-80,behavior:reduce?"auto":"smooth"})}
+  else if(d.open){const i=SEZIONI.findIndex(s=>s.id===d.open);switchTo(i)}
+});
+document.addEventListener("change",e=>{if(e.target.name==="consegna"){consegna=e.target.value;upd()}});
+try{if(localStorage.getItem("catalano-ultimo-ordine"))$("#lastOrder").hidden=false}catch(e){}
+$("#lastOrder").addEventListener("click",()=>{try{const o=JSON.parse(localStorage.getItem("catalano-ultimo-ordine"));if(o)showConfirm(o,false)}catch(e){}});
+$("#cartChip").addEventListener("click",async()=>{const i=SEZIONI[cur]&&SEZIONI[cur].book?cur:0;await open(i);const el=$("#checkout");if(el)setTimeout(()=>info.scrollTo({top:el.offsetTop-80,behavior:reduce?"auto":"smooth"}),300)});
+
+/* ---------- apertura: il libro vola a sinistra ---------- */
+let openIdx=null,hero=null,busy=false;const DUR=reduce?1:720;
+function slotRect(ar){
+  const s=slot.getBoundingClientRect();let h=s.height*.92,w=h*ar;
+  if(w>s.width*.98){w=s.width*.98;h=w/ar}
+  return {left:s.left+(s.width-w)/2,top:s.top+(s.height-h)*.5,width:w,height:h};
+}
+function placeHero(){const r=slotRect(ratios[openIdx]||.7);Object.assign(hero.style,{left:r.left+"px",top:r.top+"px",width:r.width+"px",height:r.height+"px",transform:"none"})}
+function fly(el,from,to){
+  const dx=from.left-to.left,dy=from.top-to.top,sx=from.width/to.width,sy=from.height/to.height;
+  Object.assign(el.style,{left:to.left+"px",top:to.top+"px",width:to.width+"px",height:to.height+"px",transform:"none"});
+  if(reduce||!el.animate||!isFinite(sx)||!isFinite(sy))return Promise.resolve();
+  const a=el.animate([{transform:`translate(${dx}px,${dy}px) scale(${sx},${sy})`},{transform:"none"}],{duration:DUR,easing:"cubic-bezier(.2,.8,.2,1)"});
+  return Promise.race([a.finished.catch(()=>{}),new Promise(r=>setTimeout(r,DUR+250))]);
+}
+const killHeroes=()=>document.querySelectorAll(".hero").forEach(h=>h.remove());
+const waitScroll=()=>new Promise(r=>{const t0=performance.now();(function w(){if(!anim||performance.now()-t0>1200)r();else requestAnimationFrame(w)})()});
+async function open(i){
+  if(busy||openIdx!=null)return;busy=true;const p=SEZIONI[i];
+  try{
+    if(Math.abs(centers[i]-scroller.clientWidth/2-scroller.scrollLeft)>8){goTo(i);await waitScroll()}
+    killHeroes();items.forEach(el=>el.querySelector(".dolce").classList.remove("is-hidden"));
+    openIdx=i;
+    const box=items[i].querySelector(".dolce"),img=box.querySelector("img"),r0=img.getBoundingClientRect();
+    hero=document.createElement("div");hero.className="hero"+(p.photo?" photo":"");hero.innerHTML=`<img src="${p.src}" alt="">`;document.body.appendChild(hero);
+    box.classList.add("is-hidden");app.classList.add("detail-open");
+    info.innerHTML=p.book?bookView(p.book,i):VIEW_APP();info.scrollTop=0;
+    [...info.children].forEach((c,k)=>c.style.transitionDelay=(.18+k*.04)+"s");
+    detail.classList.remove("closing");detail.classList.add("open");detail.setAttribute("aria-hidden","false");
+    upd();
+    history.replaceState(null,"","#"+p.id);
+    await fly(hero,r0,slotRect(ratios[i]||.7));
+    if(!reduce&&hero)hero.classList.add("float");
+    $("#back").focus({preventScroll:true});
+  }finally{busy=false}
+}
+async function close(){
+  if(busy||openIdx==null)return;busy=true;const i=openIdx;
+  const box=items[i].querySelector(".dolce"),img=box.querySelector("img");
+  try{
+    detail.classList.add("closing");
+    if(hero){hero.classList.remove("float");const from=hero.getBoundingClientRect(),to=img.getBoundingClientRect();app.classList.remove("detail-open");await fly(hero,from,to)}
+  }finally{
+    app.classList.remove("detail-open");box.classList.remove("is-hidden");killHeroes();hero=null;
+    detail.classList.remove("open","closing");detail.setAttribute("aria-hidden","true");$("#cartBar").classList.remove("on","hide");
+    openIdx=null;busy=false;history.replaceState(null,"",location.pathname+location.search);
+  }
+}
+async function switchTo(i){await close();goTo(i);await waitScroll();open(i)}
+$("#back").addEventListener("click",close);
+info.addEventListener("scroll",()=>{const c=document.getElementById("checkout"),bar=$("#cartBar");if(!c||!bar)return;bar.classList.toggle("hide",c.getBoundingClientRect().top<info.getBoundingClientRect().bottom-120)},{passive:true});
+$("#home").addEventListener("click",e=>{e.preventDefault();if(openIdx!=null)close();goTo(0)});
+
+/* ---------- avvio ---------- */
+upd();layout();
+addEventListener("load",()=>{layout();const h=location.hash.slice(1);const i=SEZIONI.findIndex(s=>s.id===h);if(i>=0){goTo(i);setTimeout(()=>open(i),500)}});
+}
+</script>
+</body>
+</html>
