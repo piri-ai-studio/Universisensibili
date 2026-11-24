@@ -183,6 +183,23 @@ a{color:inherit}
 .cf-card{width:min(440px,100%);max-height:calc(100dvh - 32px);overflow:auto;background:var(--bg);border-radius:24px;padding:26px 24px 22px;text-align:center;box-shadow:0 30px 60px -20px rgba(0,0,0,.4)}
 .cf-card .cart-sum{text-align:left}.cf-card .ctas{justify-content:center}
 .cf-code{font:400 clamp(40px,11vw,54px)/1 var(--display);letter-spacing:.06em;margin:10px 0 14px;font-variant-numeric:tabular-nums}
+.legal-line{margin-top:8px;font:600 11px/1.4 var(--text);color:var(--ink-dim);display:flex;flex-wrap:wrap;gap:2px 12px;align-items:center}
+.legal-line button{pointer-events:auto;color:var(--ink);text-decoration:underline;text-underline-offset:2px;padding:4px 0}
+.d-legal{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);font-size:12.5px;line-height:1.6;color:var(--ink-dim)}
+.d-legal b{color:var(--ink)}
+.d-legal button,.chk button{color:var(--ink);text-decoration:underline;text-underline-offset:2px}
+.chk{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:1.45;color:var(--ink)}
+.chk input{width:20px;height:20px;margin-top:1px;accent-color:var(--red);flex:none}
+.legal-card{width:min(680px,100%);text-align:left;padding-bottom:0}
+.legal-card h2{font:400 30px/1.15 var(--display)}
+.legal-card h3{font:400 20px/1.2 var(--display);margin-top:26px;padding-bottom:6px;border-bottom:1px solid var(--line);scroll-margin-top:10px}
+.legal-card h4{font:800 14.5px/1.3 var(--text);margin-top:14px}
+.legal-card p,.legal-card li{font-size:14.5px;line-height:1.6;margin-top:6px}
+.legal-card ul{padding-left:18px}
+.legal-card .modulo{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-top:10px}
+.legal-card .ctas{position:sticky;bottom:0;background:var(--bg);padding:12px 0 18px;margin-top:20px;justify-content:center}
+.legal-toc{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.legal-toc button{font:700 13px/1 var(--text);padding:9px 12px;border-radius:99px;box-shadow:inset 0 0 0 1px var(--line);background:#fff}
 .cf-qr{width:180px;margin:0 auto;padding:8px;background:#fff;border-radius:14px;box-shadow:0 0 0 1px var(--line)}
 .cf-qr svg{display:block;width:100%;height:auto}
 .cf-how{font-size:15px;line-height:1.55;margin:16px 0 4px;text-align:left}
@@ -234,6 +251,7 @@ a{color:inherit}
       <span class="hint" id="hint">Scorri <svg width="22" height="10" viewBox="0 0 22 10" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M1 5h20M17 1l4 4-4 4"/></svg></span>
     </div>
     <div class="progress"><i id="bar"></i></div>
+    <p class="legal-line"><span id="legalLine"></span><button type="button" data-legal="venditore">Note legali</button><button type="button" data-legal="privacy">Privacy e cookie</button></p>
   </div>
 
   <div class="detail" id="detail" aria-hidden="true">
@@ -244,6 +262,7 @@ a{color:inherit}
   </div>
 </div>
 <div class="confirm" id="confirm" hidden role="dialog" aria-modal="true" aria-label="Conferma d'ordine"><div class="cf-card"></div></div>
+<div class="confirm" id="legal" hidden role="dialog" aria-modal="true" aria-label="Note legali"><div class="cf-card legal-card"></div></div>
 
 <script src="qr.js"></script>
 <script>
@@ -260,6 +279,19 @@ const NEGOZIO={
   ordiniChiave:"",   // la stessa CHIAVE scritta nello script del foglio
   spedizione:5,      // costo spedizione Italia, DI ESEMPIO
   ritiro:"Biglietteria del Monastero del Carmine · Via Bartolomeo Colleoni 21, Bergamo Alta",
+};
+// VENDITORE — titolare del dominio e della vendita (dati dal Registro Imprese, cercati il 24/11/2026).
+// albo: numero di iscrizione all'Albo Società Cooperative (art. 2515 c.c.), da aggiungere: compare solo se compilato.
+const VENDITORE={
+  nome:"Casa degli Alfieri Società Cooperativa – Impresa Sociale",
+  breve:"Casa degli Alfieri Soc. Coop. – Impresa Sociale",
+  sede:"Località Bertolina 1, 14030 Castagnole Monferrato (AT)",
+  piva:"01203820053",
+  rea:"AT-96809",
+  albo:"",
+  email:"amministrazione@casadeglialfieri.it",
+  pec:"casadeglialfieri.asti@pec.confcooperative.it",
+  aggiornate:"24 novembre 2026"
 };
 // LIBRI. Dati e copertine dei primi due dalle schede IBS / Macrolibrarsi (novembre 2026). img: file in img/. Senza img la copertina è disegnata.
 const LIBRI=[
@@ -427,7 +459,7 @@ const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.targ
 items.forEach((el,i)=>{el.style.transitionDelay=(i*90)+"ms";io.observe(el)});
 const goTo=i=>glide(centers[i]-scroller.clientWidth/2);
 addEventListener("keydown",e=>{
-  if(e.key==="Escape"){if(!$("#confirm").hidden){closeConfirm();return}if(openIdx!=null)close();return}
+  if(e.key==="Escape"){if(!$("#legal").hidden){closeLegal();return}if(!$("#confirm").hidden){closeConfirm();return}if(openIdx!=null)close();return}
   if(openIdx!=null)return;
   if(e.key==="ArrowRight")goTo(Math.min(cur+1,items.length-1));
   if(e.key==="ArrowLeft")goTo(Math.max(cur-1,0));
@@ -466,17 +498,18 @@ const checkout=()=>`<h3 class="d-h" id="checkout">Il tuo carrello</h3>
    <div id="oAddr" hidden class="form" style="margin-top:0"><label class="f">Indirizzo<input id="oVia" autocomplete="street-address"></label>
     <div class="two"><label class="f">CAP e città<input id="oCitta" autocomplete="address-level2"></label><label class="f">Telefono<input id="oTel" type="tel" autocomplete="tel"></label></div></div>
    <label class="f">Dedica o note<textarea id="oNote" rows="2" placeholder="Una dedica dell'autore, un pacchetto regalo…"></textarea></label>
+   <label class="chk"><input type="checkbox" id="oOk"><span>Ho letto e accetto le <button type="button" data-legal="condizioni">condizioni di vendita</button>, compreso il <button type="button" data-legal="recesso">diritto di recesso</button>, e ho letto l'<button type="button" data-legal="privacy">informativa privacy</button>.</span></label>
    <div class="ctas" style="margin-top:4px">
     <button class="btn pp" type="button" data-pay="paypal"><b>Pay</b>Pal</button>
     <button class="btn" type="button" data-pay="carta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg>Paga con carta</button>
    </div>
    <div id="ppBox"></div>
    <p class="notice" id="oMsg" role="status"></p>
-   <p class="sample">Costo di spedizione di esempio. Pagamento sicuro con PayPal o carta di credito/debito.</p>
+   <p class="sample">Prezzi in euro, IVA inclusa. Il pagamento con PayPal o con carta di credito o di debito comporta l'obbligo di pagare. Venditore: ${esc(VENDITORE.breve)}.</p>
   </form>`;
 function formErr(){
   const nome=$("#oNome").value.trim(),mail=$("#oMail").value.trim();
-  return !nome?"Scrivi nome e cognome.":!/^\S+@\S+\.\S+$/.test(mail)?"Serve un'email valida per la ricevuta.":consegna==="spedizione"&&(!$("#oVia").value.trim()||!$("#oCitta").value.trim())?"Completa l'indirizzo di spedizione.":"";
+  return !nome?"Scrivi nome e cognome.":!/^\S+@\S+\.\S+$/.test(mail)?"Serve un'email valida per la ricevuta.":consegna==="spedizione"&&(!$("#oVia").value.trim()||!$("#oCitta").value.trim())?"Completa l'indirizzo di spedizione.":!$("#oOk").checked?"Per continuare, conferma di aver letto le condizioni di vendita e l'informativa privacy.":"";
 }
 /* codice d'ordine: CAT- + 4 caratteri senza lettere ambigue (0/O, 1/I) */
 function newCode(){const A="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";let s="";const r=new Uint32Array(4);crypto.getRandomValues(r);r.forEach(x=>s+=A[x%A.length]);return "CAT-"+s}
@@ -546,12 +579,78 @@ function showConfirm(o,demo){
 }
 function closeConfirm(){const b=$("#confirm");b.classList.remove("on");setTimeout(()=>b.hidden=true,300)}
 
+/* ---------- note legali (venditore, condizioni, recesso, privacy, cookie) ---------- */
+const V=VENDITORE;
+const vIdent=()=>`${esc(V.nome)} · sede legale ${esc(V.sede)} · P.IVA e C.F. ${esc(V.piva)} · REA ${esc(V.rea)}${V.albo?` · Albo Società Cooperative n. ${esc(V.albo)}`:""}`;
+const mail=a=>`<a href="mailto:${esc(a)}">${esc(a)}</a>`;
+function legalFoot(){
+  return `<p class="d-legal">Vende: <b>${vIdent()}</b> · ${mail(V.email)} · PEC ${mail(V.pec)}<br>
+   <button type="button" data-legal="condizioni">Condizioni di vendita</button> · <button type="button" data-legal="recesso">Diritto di recesso</button> · <button type="button" data-legal="privacy">Privacy</button> · <button type="button" data-legal="cookie">Cookie</button></p>`;
+}
+function legalHTML(){
+  const sp=eur(NEGOZIO.spedizione);
+  return `<p class="d-coll">universisensibili.it · aggiornate il ${esc(V.aggiornate)}</p><h2>Note legali</h2>
+  <div class="legal-toc"><button type="button" data-jump="venditore">Chi vende</button><button type="button" data-jump="condizioni">Condizioni di vendita</button><button type="button" data-jump="recesso">Recesso</button><button type="button" data-jump="privacy">Privacy</button><button type="button" data-jump="cookie">Cookie</button></div>
+
+  <h3 id="lg-venditore">Chi vende</h3>
+  <p>Il sito universisensibili.it e la vendita dei libri sono gestiti da <b>${esc(V.nome)}</b>.</p>
+  <ul><li>Sede legale: ${esc(V.sede)}</li><li>Partita IVA e codice fiscale: ${esc(V.piva)}</li><li>Iscritta al Registro delle Imprese, REA ${esc(V.rea)}</li>${V.albo?`<li>Albo Società Cooperative n. ${esc(V.albo)}</li>`:""}
+   <li>Email: ${mail(V.email)}</li><li>PEC: ${mail(V.pec)}</li></ul>
+
+  <h3 id="lg-condizioni">Condizioni di vendita</h3>
+  <h4>1. Oggetto</h4><p>Queste condizioni regolano la vendita a distanza dei libri presentati sul sito, tra il venditore indicato sopra e chi acquista. Se acquisti come consumatore si applicano il Codice del Consumo (D.Lgs. 206/2005) e il D.Lgs. 70/2003 sul commercio elettronico.</p>
+  <h4>2. Prezzi</h4><p>I prezzi sono in euro e comprendono l'IVA, che per i libri è assolta dall'editore (art. 74 del DPR 633/1972). Il ritiro a Bergamo è gratuito. La spedizione in Italia costa ${sp} per ordine. Il totale da pagare è sempre mostrato nel carrello prima del pagamento.</p>
+  <h4>3. Ordine e conclusione del contratto</h4><p>Scegli i libri, la modalità di consegna e inserisci i tuoi dati. Prima di pagare devi accettare queste condizioni. Il contratto è concluso quando il pagamento va a buon fine. A quel punto il sito mostra la conferma con il codice d'ordine e il riepilogo, che puoi salvare. Ti mandiamo anche una conferma all'indirizzo email che hai indicato. Il contratto è in lingua italiana.</p>
+  <h4>4. Pagamento</h4><p>Puoi pagare con PayPal o con carta di credito o di debito tramite PayPal. I dati della carta sono trattati direttamente da PayPal e non arrivano mai a noi. L'importo è addebitato al momento dell'ordine.</p>
+  <h4>5. Consegna</h4><ul><li><b>Ritiro a Bergamo</b>: alla ${esc(NEGOZIO.ritiro)}, dal 5 dicembre 2026 al 10 gennaio 2027 negli orari del Luna Park delle Meraviglie, mostrando il codice d'ordine o il QR.</li>
+   <li><b>Spedizione in Italia</b>: con corriere, di norma in 3–5 giorni lavorativi dalla partenza e comunque entro 30 giorni dall'ordine. Ti avvisiamo per email quando il pacco parte.</li></ul>
+  <p>Le copie sono limitate. Se un libro ordinato non è più disponibile ti avvisiamo subito e ti rimborsiamo la somma pagata per quel libro entro 14 giorni.</p>
+  <h4>6. Garanzia legale</h4><p>Hai diritto alla garanzia legale di conformità prevista dagli artt. 128 e seguenti del Codice del Consumo, per i difetti che si manifestano entro due anni dalla consegna. Se un libro arriva danneggiato o non è quello ordinato, scrivici a ${mail(V.email)} indicando il codice d'ordine, possibilmente con una foto. Lo sostituiamo o ti rimborsiamo senza costi.</p>
+  <h4>7. Reclami e legge applicabile</h4><p>Per qualsiasi reclamo scrivi a ${mail(V.email)} o alla PEC ${mail(V.pec)}. Rispondiamo di norma entro 7 giorni. Il contratto è regolato dalla legge italiana. Per le controversie con un consumatore è competente il giudice del luogo in cui il consumatore risiede.</p>
+
+  <h3 id="lg-recesso">Diritto di recesso</h3>
+  <p>Se acquisti come consumatore puoi recedere dal contratto senza dare spiegazioni entro <b>14 giorni</b> dal giorno in cui ricevi o ritiri i libri.</p>
+  <ul><li><b>Come</b>: mandaci una dichiarazione esplicita a ${mail(V.email)} o alla PEC ${mail(V.pec)}. Puoi usare il modulo qui sotto, ma non è obbligatorio.</li>
+   <li><b>Restituzione</b>: entro 14 giorni dalla comunicazione restituisci i libri integri. Puoi spedirli a ${esc(V.sede)}, con le spese a tuo carico, oppure consegnarli alla biglietteria del Monastero del Carmine durante le giornate di Natale.</li>
+   <li><b>Rimborso</b>: entro 14 giorni da quando riceviamo la tua comunicazione ti rimborsiamo quanto hai pagato, comprese le spese di spedizione standard, con lo stesso mezzo di pagamento. Possiamo attendere il rimborso finché non riceviamo i libri o la prova che li hai spediti.</li>
+   <li>Rispondi della perdita di valore dei libri solo se dipende da un uso diverso da quello necessario per valutarli.</li></ul>
+  <div class="modulo"><p><b>Modulo di recesso</b></p><p>Destinatario: ${esc(V.nome)}, ${esc(V.sede)}, ${esc(V.email)}<br>
+   Con la presente notifico il recesso dal mio contratto di vendita dei seguenti libri: ……<br>Codice d'ordine: …… · Ordinati il: …… · Ricevuti il: ……<br>Nome e cognome: …… · Indirizzo: ……<br>Data: …… · Firma (solo se il modulo è inviato su carta): ……</p></div>
+
+  <h3 id="lg-privacy">Informativa privacy</h3>
+  <p>Informativa ai sensi degli artt. 13 e 14 del Regolamento UE 2016/679 (GDPR).</p>
+  <h4>Titolare del trattamento</h4><p>${esc(V.nome)}, ${esc(V.sede)} · ${mail(V.email)} · PEC ${mail(V.pec)}.</p>
+  <h4>Quali dati</h4><p>Quelli che inserisci per l'ordine: nome e cognome e email. Per la spedizione anche indirizzo e telefono. Inoltre le eventuali note o dediche, i libri ordinati, l'importo, il codice d'ordine e l'identificativo del pagamento. Non riceviamo i dati della tua carta.</p>
+  <h4>Perché e su quale base</h4><ul><li>Gestire l'ordine, il pagamento, il ritiro o la spedizione e l'assistenza: esecuzione del contratto (art. 6.1.b GDPR).</li><li>Adempiere agli obblighi fiscali e contabili: obbligo di legge (art. 6.1.c GDPR).</li></ul>
+  <p>Non usiamo i tuoi dati per pubblicità o newsletter e non li cediamo a nessuno. I dati sono necessari per completare l'ordine: senza non possiamo venderti i libri.</p>
+  <h4>Chi li tratta</h4><ul><li>Le persone della cooperativa e della biglietteria che gestiscono gli ordini e i ritiri.</li><li>Google (Google Workspace): il foglio in cui vengono registrati gli ordini e le email di servizio. Google agisce come responsabile del trattamento.</li><li>PayPal (Europe) S.à r.l. et Cie, S.C.A., per il pagamento. PayPal agisce come titolare autonomo, con una propria informativa.</li><li>Il corriere, solo per le spedizioni.</li><li>GitHub (che ospita il sito) e Google Fonts (che fornisce i caratteri del sito) ricevono i dati tecnici di navigazione, come l'indirizzo IP.</li></ul>
+  <p>Alcuni di questi fornitori possono trasferire i dati fuori dall'Unione Europea, per esempio negli Stati Uniti. In questi casi il trasferimento avviene con le garanzie previste dal GDPR, come il Data Privacy Framework UE-USA o le clausole contrattuali standard.</p>
+  <h4>Per quanto tempo</h4><p>I dati dell'ordine sono conservati per il tempo necessario a gestirlo e poi per 10 anni, come richiesto per i documenti contabili (art. 2220 c.c.). Gli altri dati vengono cancellati alla chiusura della campagna di Natale.</p>
+  <h4>I tuoi diritti</h4><p>Puoi chiedere di accedere ai tuoi dati, correggerli o cancellarli e di limitarne il trattamento. Puoi anche opporti al trattamento e chiedere la portabilità dei dati (artt. 15–22 GDPR). Per esercitare questi diritti scrivi a ${mail(V.email)}. Puoi anche presentare un reclamo al Garante per la protezione dei dati personali (garanteprivacy.it).</p>
+
+  <h3 id="lg-cookie">Cookie</h3>
+  <p>Il sito non usa cookie di profilazione, pubblicitari o statistici, e per questo non ti chiede alcun consenso.</p>
+  <ul><li>Il carrello e l'ultimo ordine sono salvati solo nel tuo browser (localStorage), per non perderli se chiudi la pagina. Sono strumenti tecnici, necessari al servizio (art. 122 del Codice privacy). Puoi cancellarli dalle impostazioni del browser.</li>
+   <li>I caratteri del sito sono caricati da Google Fonts, che riceve l'indirizzo IP del tuo dispositivo.</li>
+   <li>Quando scegli di pagare viene caricato il servizio di PayPal, che può usare propri cookie tecnici e di sicurezza secondo la sua informativa.</li></ul>
+  <div class="ctas"><button class="btn" type="button" data-closelegal="1">Chiudi</button></div>`;
+}
+function openLegal(sec){
+  const box=$("#legal"),card=box.querySelector(".cf-card");
+  if(box.hidden){card.innerHTML=legalHTML();box.hidden=false;requestAnimationFrame(()=>box.classList.add("on"))}
+  const h=card.querySelector("#lg-"+sec);card.scrollTop=h&&sec!=="venditore"?h.offsetTop-12:0;
+  card.querySelector("[data-closelegal]").focus({preventScroll:true});
+}
+function closeLegal(){const b=$("#legal");b.classList.remove("on");setTimeout(()=>b.hidden=true,300)}
+$("#legalLine").textContent=`© 2026 ${V.breve} · P.IVA ${V.piva}`;
+$("#legal").addEventListener("click",e=>{if(e.target.id==="legal")closeLegal()});
+
 /* ---------- viste ---------- */
 function bookView(b,i){
   const ok=b.stato==="ok";
   return `<p class="d-coll">${ok?`${b.editore} · ${b.anno}`:"In arrivo"}</p><h2 class="d-name">${esc(b.titolo)}</h2><span class="rule"></span>
   <p class="d-sub">${b.sotto?`<em>${esc(b.sotto)}</em> · `:""}di ${esc(b.autori||"Antonio Catalano")}</p>
-  <div class="buy">${ok?`<div class="pr">${eur(b.prezzo)}<small>prezzo di copertina</small></div>${stepper(b.id)}<div class="ctas"><button class="btn red" type="button" data-add="${b.id}">Aggiungi al carrello</button></div>`
+  <div class="buy">${ok?`<div class="pr">${eur(b.prezzo)}<small>prezzo di copertina, IVA inclusa</small></div>${stepper(b.id)}<div class="ctas"><button class="btn red" type="button" data-add="${b.id}">Aggiungi al carrello</button></div>`
     :`<div class="pr" style="font-size:26px">Presto disponibile<small>Titolo, foto e prezzo in arrivo</small></div>`}</div>
   <p class="d-script">${esc(b.frase)}</p>
   ${b.testo.map(t=>`<p class="d-text">${md(t)}</p>`).join("")}
@@ -559,7 +658,7 @@ function bookView(b,i){
    <li><span>${b.autori?"Autori":"Autore"}</span><b>${esc(b.autori||"Antonio Catalano")}</b></li><li><span>Editore</span><b>${esc(b.editore)}</b></li><li><span>Anno</span><b>${b.anno}</b></li>
    ${b.pagine?`<li><span>Pagine</span><b>${b.pagine}</b></li>`:""}<li><span>Formato</span><b>${esc(b.formato)}</b></li><li><span>ISBN</span><b>${esc(b.isbn)}</b></li></ul>
 `:""}
-  ${checkout()}`;
+  ${checkout()}${legalFoot()}`;
 }
 const MESI=["gennaio","febbraio","marzo","aprile","maggio","giugno","luglio","agosto","settembre","ottobre","novembre","dicembre"];
 const day=s=>{const[a,b,c]=s.split("-").map(Number);return new Date(a,b-1,c)};
@@ -580,7 +679,7 @@ const VIEW_APP=()=>`<p class="d-coll">Natale 2026 · Bergamo Alta</p><h2 class="
   <h3 class="d-h">Dove comprare i nostri libri</h3>
   <div class="shops">${LIBRERIE.length?LIBRERIE.map(l=>`<a class="opt" href="${esc(l.link||"#")}" target="_blank" rel="noopener"><span><b>${esc(l.nome)}</b><small>${esc(l.citta)} · ${esc(l.indirizzo)}</small></span></a>`).join("")
     :'<div class="shop-ph">Stiamo raccogliendo le librerie che hanno i nostri libri: presto le trovi qui. Intanto puoi comprarli online da questo sito, o al Monastero del Carmine durante le giornate di Natale.</div>'}</div>
-  <div class="ctas"><button class="btn red" type="button" data-open="vangelo">Vai ai libri</button></div>`;
+  <div class="ctas"><button class="btn red" type="button" data-open="vangelo">Vai ai libri</button></div>${legalFoot()}`;
 
 document.addEventListener("click",e=>{
   const go=e.target.closest("[data-go]");if(go){goTo(+go.dataset.go);return}
@@ -591,6 +690,9 @@ document.addEventListener("click",e=>{
   else if(d.pay)pay(d.pay);
   else if(d.preview){if(!formErr())showConfirm(buildOrder("Anteprima"),true)}
   else if(d.closeconf)closeConfirm();
+  else if(d.legal)openLegal(d.legal);
+  else if(d.jump)openLegal(d.jump);
+  else if(d.closelegal)closeLegal();
   else if(d.goto){const el=document.getElementById(d.goto);if(el)info.scrollTo({top:el.offsetTop-80,behavior:reduce?"auto":"smooth"})}
   else if(d.open){const i=SEZIONI.findIndex(s=>s.id===d.open);switchTo(i)}
 });
