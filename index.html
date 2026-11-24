@@ -410,7 +410,7 @@ const items=SEZIONI.map((p,i)=>{
    <div class="label" style="--tilt:${tilt}deg"><span class="name">${esc(p.name)}</span><span class="rule"></span><span class="coll">${esc(p.coll)}</span></div>`;
   const im=el.querySelector(".dolce img");
   const setAr=()=>{if(im.naturalWidth){const ar=Math.min(Math.max(im.naturalWidth/im.naturalHeight,.6),1.9);ratios[i]=ar;el.style.setProperty("--ar",ar);layout()}};
-  im.complete?setAr():im.addEventListener("load",setAr);
+  im.complete?queueMicrotask(setAr):im.addEventListener("load",setAr); // in cache: misura dopo che lo scaffale è pronto
   el.addEventListener("click",()=>open(i));
   track.appendChild(el);return el;
 });
