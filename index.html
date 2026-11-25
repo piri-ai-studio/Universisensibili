@@ -47,7 +47,7 @@ a{color:inherit}
 .scroller.free{scroll-snap-type:none}
 .scroller::-webkit-scrollbar{display:none}
 .track{position:relative;height:100%;display:flex;align-items:center;padding-top:4dvh;width:max-content}
-.item{position:relative;flex:0 0 auto;width:calc(var(--H) * var(--ar) * var(--sc,1) + 16vw);min-width:170px;display:flex;flex-direction:column;align-items:center;scroll-snap-align:center;opacity:0;transform:translateY(28px);transition:opacity .9s var(--ease),transform .9s var(--ease);will-change:transform,opacity}
+.item{position:relative;flex:0 0 auto;width:calc(var(--H) * var(--ar) * var(--sc,1) + 10vw);min-width:170px;display:flex;flex-direction:column;align-items:center;scroll-snap-align:center;opacity:0;transform:translateY(28px);transition:opacity .9s var(--ease),transform .9s var(--ease);will-change:transform,opacity}
 .item.in{opacity:1;transform:none}
 #app.detail-open .item{opacity:0!important;transform:scale(.96);transition-duration:.45s}
 .dolce{position:relative;height:var(--H);width:calc(var(--H) * var(--ar) * var(--sc,1));display:flex;align-items:flex-end;justify-content:center}
