@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#fbf6ec">
+<title>Stiamo tornando · Antonio Catalano</title>
+<meta name="description" content="Universi Sensibili di Antonio Catalano: stiamo preparando qualcosa di nuovo. Torna a trovarci presto.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Nunito+Sans:wght@400;700&family=Caveat:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:light;
+  --bg:#fbf6ec; --ink:#1e3329; --ink-dim:rgba(30,51,41,.68); --ink-faint:rgba(30,51,41,.22);
+  --red:#b3261e; --gold:#d4a23a;
+  --display:"Young Serif",Georgia,serif; --text:"Nunito Sans",system-ui,sans-serif; --script:"Caveat","Segoe Script",cursive;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  min-height:100dvh;display:flex;flex-direction:column;
+  background:radial-gradient(ellipse at 50% 38%,#f6e3d6 0%,var(--bg) 62%);
+  color:var(--ink);font:400 16px/1.5 var(--text);
+  -webkit-font-smoothing:antialiased;
+}
+header{padding:clamp(18px,3vw,32px) clamp(20px,4vw,44px)}
+.brand{font:400 clamp(20px,2.2vw,26px)/1.1 var(--display)}
+.brand small{display:block;font:500 18px/1.2 var(--script);color:var(--red);margin-top:2px}
+main{flex:1;display:grid;place-items:center;text-align:center;padding:24px 22px 40px}
+.sky{width:min(220px,46vw);height:auto;margin:0 auto 26px;display:block}
+.sky .star{fill:var(--gold);transform-origin:center;transform-box:fill-box;animation:twinkle 3.2s ease-in-out infinite}
+.sky .star:nth-of-type(2){animation-delay:1.1s}
+.sky .star:nth-of-type(3){animation-delay:2.2s}
+.sky path,.sky circle.line{fill:none;stroke:var(--ink);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+@keyframes twinkle{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.7)}}
+@media (prefers-reduced-motion:reduce){.sky .star{animation:none}}
+h1{font:400 clamp(40px,7vw,84px)/1.02 var(--display);letter-spacing:-.01em}
+.note{font:500 clamp(24px,3vw,32px)/1.2 var(--script);color:var(--red);margin-top:14px}
+p.lead{max-width:34ch;margin:18px auto 0;color:var(--ink-dim);font-size:clamp(16px,1.4vw,18px)}
+footer{
+  padding:16px clamp(20px,4vw,44px) calc(16px + env(safe-area-inset-bottom));
+  border-top:1px solid var(--ink-faint);font-size:12px;color:var(--ink-dim);text-align:center
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">Antonio Catalano<small>universi sensibili</small></div>
+</header>
+<main>
+  <div>
+    <svg class="sky" viewBox="0 0 220 120" aria-hidden="true">
+      <path d="M58 30a20 20 0 1 0 22 26a16 16 0 1 1-22-26z"/>
+      <path d="M150 104l22-40l22 40z"/><path d="M160 86h24"/>
+      <path d="M20 112h180"/>
+      <polygon class="star" points="118,14 121,23 130,23 123,28 126,37 118,31 110,37 113,28 106,23 115,23"/>
+      <polygon class="star" points="178,26 180,31 185,31 181,34 183,39 178,36 173,39 175,34 171,31 176,31"/>
+      <polygon class="star" points="96,52 97.5,56 102,56 98.5,58.5 100,63 96,60 92,63 93.5,58.5 90,56 94.5,56"/>
+    </svg>
+    <h1>Stiamo tornando</h1>
+    <div class="note">tra poco, una nuova meraviglia</div>
+    <p class="lead">Stiamo preparando il nuovo sito. Torna a trovarci presto.</p>
+  </div>
+</main>
+<footer>© 2026 Casa degli Alfieri Soc. Coop. – Impresa Sociale · P.IVA 01203820053</footer>
+</body>
+</html>
